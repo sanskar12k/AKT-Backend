@@ -27,7 +27,7 @@ const seedDB = async () => {
     // const regUser = await User.register(user, password);
     // const newSale = new sale({ sale: 45000, customer:100, paytm:12000, hdfc:7854, modified:Date.now(), added:regUser._id});
     // await newSale.save();
-    const res = await sale.updateMany({},{'store':"AKT Old"})
+    const res = await User.updateMany({},{'store':"AKT Old"})
     console.log(res)
     }
     catch(e){

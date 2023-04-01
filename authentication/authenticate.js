@@ -43,21 +43,24 @@ exports.verifyUser = async(req,res,next)=>{
 exports.authenticateToken = (req, res, next) =>{
   // console.log(req.cookie, 'sndk')
   const authHeader = req.body.header || req.headers['authorization'];
-  if(!authHeader){
-    res.status(200).send({
-      user:null
-  })
-  }
+  // if(!authHeader){
+  //   res.status(200).send({
+  //     user:null
+  // })
+  // console.log(authHeader)
+  // next();
+  // }
   const cook = req.cookies;
-  // console.log(cook.jwtoken, 'dd')
-  // console.log(authHeader, 'auth')
-  const token = cook.jwtoken || authHeader.split('jwtoken=')[1]
+  // console.log(cook, 'dd')
+  // console.log(!authHeader, 'auth')
+  const token = cook.jwtoken || authHeader?.split('jwtoken=')[1]
   if(!token){
-    res.status(200).send({
+    // console.log('tkn')
+    return res.status(200).send({
         user:null
     })
 }
-console.log(token,'token');
+// console.log(token,'token');
   jwt.verify(token, process.env.SECKEY, (err, user) => {
     console.log(err)
     if (err) return res.sendStatus(403)

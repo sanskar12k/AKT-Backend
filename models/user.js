@@ -26,6 +26,19 @@ const userSchema = new Schema({
     number:{
         type:String
     },
+    phoneVerify:{
+      type: Boolean,
+      default:false
+    },
+    mailVerify:{
+      type: Boolean,
+      default:false
+    },
+    store:{
+      type: String,
+      enum:['AKT Old', 'AKT New']
+    },
+    
     username:{
       type:String,
       unique: true,
@@ -34,6 +47,9 @@ const userSchema = new Schema({
     hash:{
       type:String,
       required:true
+    },
+    dob:{
+      type:Date,
     }
 })
 

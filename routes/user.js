@@ -5,8 +5,9 @@ const router = express.Router();
 const passport = require('passport');
 const { getToken, getRefreshToken, COOKIE_OPTIONS, verifyUser, authenticateToken, isAuthorized, authenticate } = require('../authentication/authenticate');
 const jwt = require('jsonwebtoken');
-const { userSchema, saleSchema } = require('../schemas/joi');
-const bcrypt = require("bcrypt")
+const { userSchema, validateSaleSchema } = require('../schemas/joi');
+const bcrypt = require("bcrypt");
+const otp = require('otp-generator')
 const validateUserSchema = (req, res, next) =>{
     const { error } = userSchema.validate(req.body);
     if(error){
@@ -18,16 +19,6 @@ const validateUserSchema = (req, res, next) =>{
     }
 }
 
-const validateSaleSchema = (req, res, next) =>{
-    const { error } = saleSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',')
-        next(msg)
-    }
-    else{
-        next();
-    }
-}
 
 router.post('/create', validateUserSchema, async (req, res, next) => {
     // try {
@@ -51,7 +42,7 @@ router.post('/create', validateUserSchema, async (req, res, next) => {
     //         "message": e
     //     })
     // }
-    const {fname, lname, role, number, username, password} = req.body;
+    const {fname, lname, role, number, username, password, store, dob} = req.body;
       
       if ( !fname || !role || !password || !username ){
          res.status(422).send({error: 'Please fill all the columns'});
@@ -64,7 +55,7 @@ router.post('/create', validateUserSchema, async (req, res, next) => {
             
           } 
           else{
-            const user = new User({fname, username, lname, role, number, hash:password});
+            const user = new User({fname, username, lname, role, number, store, hash:password, dob});
             //Saves data to db
             await user.save();
             res.status(201).json({message: "User created", user});
@@ -257,7 +248,8 @@ router.patch("/:id/edit", authenticateToken, async (req, res) => {
             fname:req.body.fname,
             lname:req.body.lname,
             number:req.body.number,
-            username:req.body.username
+            username:req.body.username,
+            role:req.body.role
         },{
             new:true,
             runValidators:true
@@ -333,5 +325,16 @@ router.post('/addSale', authenticateToken, isAuthorized, validateSaleSchema, asy
         next(e);
     }
 })
+
+
+
+// router.get('/sendOtp', authenticateToken, async(req, res) =>{ 
+//     try {
+//         const contact = req.user.number;
+
+//     } catch (error) {
+//         console.log(error)
+//     }
+// })
 
 module.exports = router;

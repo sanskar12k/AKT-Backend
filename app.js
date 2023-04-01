@@ -1,5 +1,4 @@
 const express = require('express');
-// const { Session } = require('express-session');
 const app = express();
 const mongoose = require('mongoose');
 const session  = require('express-session');
@@ -8,8 +7,7 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const Sale = require('./models/sale')
 const user = require('./routes/user');
-// require('./authentication/JwtStrategy');
-// require('./authentication/authenticate')
+const sale = require('./routes/sale')
 const {sms} = require('./mailer/sms');
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -51,8 +49,6 @@ const sessionConfig = {
 }
 
 app.use(session(sessionConfig))
-// app.use(passport.initialize());
-// app.use(passport.session());
 mongoose.connect('mongodb+srv://dbUser:sanskar12@cluster0.lyou7.mongodb.net/aktraders?retryWrites=true&w=majority',{
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -93,7 +89,9 @@ app.get('/', (req, res)=>{
 //for session adding and destroying
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
-app.use('/user', user)
+app.use('/user', user);
+app.use('/sale', sale)
+
 
 
 app.listen(3000, ()=>{

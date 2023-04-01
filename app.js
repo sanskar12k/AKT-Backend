@@ -49,7 +49,7 @@ const sessionConfig = {
 }
 
 app.use(session(sessionConfig))
-mongoose.connect('mongodb+srv://sanskarmodanwal8:UYfFZqrr41BkkN39@cluster0.tcj4zor.mongodb.net/?retryWrites=true&w=majority',{
+mongoose.connect('mongodb+srv://sanskarmodanwal8:UYfFZqrr41BkkN39@cluster0.tcj4zor.mongodb.net/aktraders?retryWrites=true&w=majority',{
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })

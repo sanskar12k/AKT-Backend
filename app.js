@@ -82,7 +82,7 @@ const job = schedule.scheduleJob('00 22 * * *', function(){
 });
 app.get('/', (req, res)=>{
     console.log(req.session)
-    res.send('')
+    res.send('Test api sexfully')
 })
 //Using for authentication &authentication is added as static method
 // passport.use(new LocalStrategy(User.authenticate()));

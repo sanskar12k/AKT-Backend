@@ -1,6 +1,6 @@
 const Sale = require('../models/sale');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://dbUser:sanskar12@cluster0.lyou7.mongodb.net/aktraders?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://sanskarmodanwal8:UYfFZqrr41BkkN39@cluster0.tcj4zor.mongodb.net/aktraders?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })

@@ -20,7 +20,7 @@ const {sms} = require('./mailer/sms');
 });
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors')
-app.use(cors({credentials: true, origin: 'http://localhost:3001'}));
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 app.use(cookieParser('thisismysecret'));

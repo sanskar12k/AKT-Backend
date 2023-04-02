@@ -77,7 +77,7 @@ app.use(
 
 
 const schedule = require('node-schedule');
-const job = schedule.scheduleJob('00 22 * * *', function(){
+const job = schedule.scheduleJob('10 03 * * *', function(){
     sms();
 });
 app.get('/', (req, res)=>{

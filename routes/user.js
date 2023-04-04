@@ -3,7 +3,7 @@ const User = require('../models/user');
 const Sale = require('../models/sale')
 const router = express.Router();
 const passport = require('passport');
-const { getToken, getRefreshToken, COOKIE_OPTIONS, verifyUser, authenticateToken, isAuthorized, authenticate } = require('../authentication/authenticate');
+const { getToken, getRefreshToken, COOKIE_OPTIONS, verifyUser, authenticateToken, isAuthorized, isAuthorizedForAddingSale, authenticate } = require('../authentication/authenticate');
 const jwt = require('jsonwebtoken');
 const { userSchema, validateSaleSchema } = require('../schemas/joi');
 const bcrypt = require("bcrypt");
@@ -83,11 +83,14 @@ router.post('/create', validateUserSchema, async (req, res, next) => {
            const userPassword = await bcrypt.compare(password, userEmail.hash);
             if(userPassword){
               const token = await userEmail.genToken();
-              res.cookie('jwtoken', token, {
-                  expires: new Date(Date.now() + 1296000000 ), //1296000000ms = 15days
-              })
-                res.status(200).json({message:"Login Successful", userEmail});
-            }else(res.status(400).json({err:"Invalid Credential"}))
+            //   res.cookie('jwtoken', token, {
+            //       expires: new Date(Date.now() + 1296000000 ), //1296000000ms = 15days
+            //   })
+                res.status(200).json({message:"Login Successful", userEmail, token});
+            }
+            else{
+                res.status(400).json({err:"Invalid Credential"});
+            }
            
            }else {
             res.status(400).json({err:"Invalid Credential mail "});
@@ -179,7 +182,7 @@ router.post('/refreshToken', async (req, res, next) => {
 })
 
 // router.post('/userPro', async (req, res) => {
-router.post('/userPro', authenticateToken, async (req, res) => {
+router.get('/userPro', authenticateToken, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         res.status(200).json({
@@ -305,7 +308,7 @@ router.get("/sale", authenticateToken, isAuthorized, async (req, res, next) => {
 })
 
 
-router.post('/addSale', authenticateToken, isAuthorized, validateSaleSchema, async (req, res, next) => {
+router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSaleSchema, async (req, res, next) => {
     try {
         const { sale, customer, paytm, hdfc, created, added, store, addedName } = req.body;
         if (!sale || !customer || !added) {
@@ -317,7 +320,7 @@ router.post('/addSale', authenticateToken, isAuthorized, validateSaleSchema, asy
 
         const data = await report.save();
         res.status(200).json({
-            "message": "Reported"
+            "message": "Report Added Successfully"
         })
         console.log(data)
     }

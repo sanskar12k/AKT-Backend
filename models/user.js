@@ -68,7 +68,7 @@ userSchema.pre('save' , async function(next) {
   next();
 });
 
-
+ 
 userSchema.methods.genToken = async function(){
   try{
     console.log(this._id, 'dkmk')

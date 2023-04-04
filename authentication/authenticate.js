@@ -41,47 +41,25 @@ exports.verifyUser = async(req,res,next)=>{
 }
 
 exports.authenticateToken = (req, res, next) =>{
-  // console.log(req.cookie, 'sndk')
-  const authHeader = req.body.header || req.headers['authorization'];
-  // if(!authHeader){
-  //   res.status(200).send({
-  //     user:null
-  // })
-  // console.log(authHeader)
-  // next();
-  // }
-  const cook = req.cookies;
-  // console.log(cook, 'dd')
-  // console.log(!authHeader, 'auth')
-  const token = cook.jwtoken || authHeader?.split('jwtoken=')[1]
+  const authHeader = req.headers['authorization'];
+  console.log(req.headers, authHeader)
+  const token = authHeader && authHeader.split('token=')[1];
+  if (token == null) return res.sendStatus(401);
   if(!token){
-    // console.log('tkn')
-    return res.status(200).send({
-        user:null
+    // console.log('token')
+    return res.status(403).send({
     })
-}
-// console.log(token,'token');
+};
+ console.log(token)
   jwt.verify(token, process.env.SECKEY, (err, user) => {
     console.log(err)
-    if (err) return res.sendStatus(403)
-    // console.log(user, 'user')
+    if (err) return res.sendStatus(403);
+    // console.log(user)
     req.user = user
     next()
   })
 }
 
-exports.authenticate = async(req, res, next)=>{
-  console.log(req.cookie);
-  console.log(req.user)
-  const user = await User.findById(req.body.id);
-  if(!user){
-    return res.status(403).json({
-      message:"Not authorized3"
-    })
-  }
-  req.user = user;
-  next();
-}
 
 exports.isAuthorized = async(req, res, next) =>{
   try {
@@ -89,11 +67,7 @@ exports.isAuthorized = async(req, res, next) =>{
       throw new Error('Not Authorized')
     }
     const user = await User.findById(req.user._id);
-    console.log(user.role, 'lore')
-    if(user.role !== 'Owner' && user.role !== 'Manager' && user.role !== 'CompOper'){
-      // return res.status(403).json({
-      //   message:"Not authorized2"
-      // })
+    if(user.role !== 'Owner' && user.role !== 'Manager'){
       throw new Error('Not Authorized')
     }
     next();
@@ -102,8 +76,23 @@ exports.isAuthorized = async(req, res, next) =>{
       message:error
     })
   }
+}
  
-  
+  exports.isAuthorizedForAddingSale = async(req, res, next) =>{
+    try {
+      if(!req.user){
+        throw new Error('Not Authorized')
+      }
+      const user = await User.findById(req.user._id);
+      if(user.role !== 'Owner' && user.role !== 'Manager' && user.role !== 'CompOper'){
+        throw new Error('Not Authorized')
+      }
+      next();
+    } catch (error) {
+      return res.status(403).json({
+        message:error
+      })
+    }
 }
 
 module.exports.register = async(req, res, next) => {
@@ -163,3 +152,17 @@ module.exports.authentication = async(req, res) => {
        console.log(err);
         }
 } 
+
+
+// exports.authenticate = async(req, res, next)=>{
+//   console.log(req.cookie);
+//   console.log(req.user)
+//   const user = await User.findById(req.body.id);
+//   if(!user){
+//     return res.status(403).json({
+//       message:"Not authorized3"
+//     })
+//   }
+//   req.user = user;
+//   next();
+// }

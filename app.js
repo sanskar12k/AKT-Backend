@@ -20,7 +20,7 @@ const {sms} = require('./mailer/sms');
 });
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors')
-app.use(cors({credentials: true, origin: 'https://akt-frontend.vercel.app/'}));
+app.use(cors({credentials: true, origin: 'https://akt-frontend.vercel.app'}));
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 app.use(cookieParser('thisismysecret'));

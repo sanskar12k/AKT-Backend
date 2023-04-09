@@ -97,13 +97,3 @@ app.use('/sale', sale)
 app.listen(8000, ()=>{
     console.log("Connected")
 })
-<<<<<<< HEAD
-
-
-
-//  --> /home
-//  --> /login
-//  --> /signup
-//  --> /tnc
-=======
->>>>>>> 7fbf930820e2613b073c33caa0368529c1c60d4a

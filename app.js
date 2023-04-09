@@ -10,7 +10,7 @@ const user = require('./routes/user');
 const sale = require('./routes/sale')
 const {sms} = require('./mailer/sms');
   app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', 'https://akt-frontend.vercel.app');
     res.header('Access-Control-Allow-Credentials', true);
     res.header(
         'Access-Control-Allow-Headers',

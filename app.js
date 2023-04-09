@@ -23,7 +23,8 @@ const cors = require('cors')
 app.use(cors({
     // origin: 'https://akt-frontend-git-main-sanskar12k.vercel.app',
     origin:'https://akt-frontend.vercel.app',
-  credentials: true
+  credentials: true,
+  optionSuccessStatus:200,
 }));
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');

@@ -11,6 +11,7 @@ const sale = require('./routes/sale')
 const {sms} = require('./mailer/sms');
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'https://akt-frontend.vercel.app');
+    // res.header('Access-Control-Allow-Origin', "http://localhost:3000");
     res.header('Access-Control-Allow-Credentials', true);
     res.header(
         'Access-Control-Allow-Headers',
@@ -21,8 +22,8 @@ const {sms} = require('./mailer/sms');
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors')
 app.use(cors({
-    // origin: 'https://akt-frontend-git-main-sanskar12k.vercel.app',
     origin:'https://akt-frontend.vercel.app',
+    // orign:'http://localhost:3000',
   credentials: true,
   optionSuccessStatus:200,
 }));
@@ -54,7 +55,7 @@ const sessionConfig = {
 }
 
 app.use(session(sessionConfig))
-mongoose.connect('mongodb+srv://sanskarmodanwal8:UYfFZqrr41BkkN39@cluster0.tcj4zor.mongodb.net/aktraders?retryWrites=true&w=majority',{
+mongoose.connect(process.env.MONGO_D,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
@@ -89,6 +90,7 @@ app.get('/', (req, res)=>{
     console.log(req.session)
     res.send('Test api sexfully')
 })
+
 //Using for authentication &authentication is added as static method
 // passport.use(new LocalStrategy(User.authenticate()));
 //for session adding and destroying

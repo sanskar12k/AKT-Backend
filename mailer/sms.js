@@ -1,16 +1,17 @@
 const Sale = require('../models/sale');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://sanskarmodanwal8:UYfFZqrr41BkkN39@cluster0.tcj4zor.mongodb.net/aktraders?retryWrites=true&w=majority', {
+
+if(process.env.NODE_ENV !== 'production'){
+    require('dotenv').config();
+}
+
+mongoose.connect(process.env.MONGO_D, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
     .then(() => console.log("Connected2"))
     .catch((e) => console.log(e))
 
-// app.use(method('method'))
-if(process.env.NODE_ENV !== 'production'){
-    require('dotenv').config();
-}
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
@@ -52,14 +53,18 @@ module.exports.sms = async() =>{
       .catch(err => console.log(err))
     }
     }
-        catch (error) {
+    catch (error) {
         console.log(error)
-    }
-    
-       
+    }   
 }
-// sms();
-// const schedule = require('node-schedule')
-// const job = schedule.scheduleJob('14 22 * * *', function(){
-//     sms();
-// });
+
+
+module.exports.sendOtp = async(otp, num, reason) => {
+    let msg = '\n';
+    msg += otp;
+    msg += " This is your otp for " + reason + " at AK Traders";
+    client.messages
+        .create({body: msg, from: '+17208217190', to: number[1]})
+        .then(message => console.log(message.sid))
+        .catch(err => console.log(err))
+}

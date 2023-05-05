@@ -50,6 +50,9 @@ const userSchema = new Schema({
     },
     dob:{
       type:Date,
+    },
+    pwChange:{
+        type:String
     }
 })
 

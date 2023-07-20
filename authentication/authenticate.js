@@ -46,15 +46,15 @@ exports.authenticateToken = (req, res, next) =>{
   const token = authHeader && authHeader.split('token=')[1];
   if (token == null) return res.sendStatus(401);
   if(!token){
-    // console.log('token')
+    console.log('token', token)
     return res.status(403).send({
     })
 };
  console.log(token)
   jwt.verify(token, process.env.SECKEY, (err, user) => {
     console.log(err)
-    if (err) return res.sendStatus(403);
-    // console.log(user)
+    if (err) return res.status(403).json({"msg":"Failed authentication"});
+    console.log(user, "user")
     req.user = user
     next()
   })

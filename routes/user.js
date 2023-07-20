@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
             }
 
         } else {
-            res.status(400).json({ err: "Invalid Credential mail " });
+            res.status(400).json({ err: "User doesn't exist " });
         }
     }
     catch (err) {
@@ -236,10 +236,11 @@ router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSa
 
 router.get('/sendOtp', authenticateToken, async (req, res) => {
     try {
-        // const num = req.user.number;
-        const num = +91782830128;
+        const num = '+91' +  req.user.number;
+
+        // const num = +91782830128;
         var otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
-        console.log(otp);
+        console.log(otp, req.user);
         const user = await User.findById(req.user._id);
         user.pwChange = otp;
         await user.save();

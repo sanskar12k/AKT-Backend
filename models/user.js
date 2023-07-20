@@ -75,7 +75,7 @@ userSchema.pre('save' , async function(next) {
 userSchema.methods.genToken = async function(){
   try{
     console.log(this._id, 'dkmk')
-    const tkrn = jwt.sign({_id: this._id, fnme: this.fname, role:this.role}, process.env.SECKEY);
+    const tkrn = jwt.sign({_id: this._id, fnme: this.fname, role:this.role, number:this.number}, process.env.SECKEY);
     return tkrn;
   }catch(e){
     console.log(e);

@@ -48,7 +48,7 @@ module.exports.sms = async() =>{
     console.log(msg);
     for(num of number)
     {client.messages
-      .create({body: msg, from: '+17208217190', to: num})
+      .create({body: msg, from: process.env.TWILIO_NUM, to: num})
       .then(message => console.log(message.sid))
       .catch(err => console.log(err))
     }
@@ -63,8 +63,9 @@ module.exports.sendOtp = async(otp, num, reason) => {
     let msg = '\n';
     msg += otp;
     msg += " This is your otp for " + reason + " at AK Traders";
+    console.log(msg, process.env.TWILIO_NUM, num);
     client.messages
-        .create({body: msg, from: '+17208217190', to: number[1]})
+        .create({body: msg, from: process.env.TWILIO_NUM, to: num})
         .then(message => console.log(message.sid))
         .catch(err => console.log(err))
 }

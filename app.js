@@ -11,11 +11,11 @@ const sale = require('./routes/sale')
 const {sms} = require('./mailer/sms');
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'https://akt-frontend.vercel.app');
-    // res.header('Access-Control-Allow-Origin', "http://localhost:3000");
+    //  res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
     res.header('Access-Control-Allow-Credentials', true);
-    res.header(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept'
+      res.header(
+      'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     );
     next();
 });
@@ -23,9 +23,9 @@ const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors')
 app.use(cors({
     origin:'https://akt-frontend.vercel.app',
-    // orign:'http://localhost:3000',
-  credentials: true,
-  optionSuccessStatus:200,
+    // origin:'http://localhost:3000',
+      credentials: true,
+     optionSuccessStatus:200,
 }));
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -88,7 +88,7 @@ const job = schedule.scheduleJob('10 03 * * *', function(){
 });
 app.get('/', (req, res)=>{
     console.log(req.session)
-    res.send('Test api sexfully')
+    res.send('Test api successfully')
 })
 
 //Using for authentication &authentication is added as static method

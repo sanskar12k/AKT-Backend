@@ -306,8 +306,8 @@ router.patch('/verifyPhone', authenticateToken, async (req, res) => {
 
 router.get('/sendOtpForNumVerify', authenticateToken, async (req, res) => {
     try {
-        // const num = req.user.number;
-        const num = +91782830128;
+        const num = '+91' +  req.user.number;
+        //const num = +91782830128;
         var otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
         console.log(otp);
         const user = await User.findById(req.user._id);

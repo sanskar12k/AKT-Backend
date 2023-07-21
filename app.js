@@ -10,8 +10,8 @@ const user = require('./routes/user');
 const sale = require('./routes/sale')
 const {sms} = require('./mailer/sms');
   app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'https://akt-frontend.vercel.app');
-    //  res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+   res.header('Access-Control-Allow-Origin', 'https://akt-frontend.vercel.app');
+   // res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
     res.header('Access-Control-Allow-Credentials', true);
       res.header(
       'Access-Control-Allow-Headers',
@@ -23,9 +23,9 @@ const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors')
 app.use(cors({
     origin:'https://akt-frontend.vercel.app',
-    // origin:'http://localhost:3000',
+    //origin:'http://localhost:3000',
       credentials: true,
-     optionSuccessStatus:200,
+    //  optionSuccessStatus:200,
 }));
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');

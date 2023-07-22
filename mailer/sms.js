@@ -18,8 +18,8 @@ const client = require('twilio')(accountSid, authToken);
 const number = ['+917296806351', '+917852830128']
 module.exports.sms = async() =>{
     try{
-        const d1 = await Sale.find({'store':'AKT Old', 'created':{$lte: new Date()}}).sort({ created: -1 }).limit(1);
-        const d2 = await Sale.find({'store':'AKT New', 'created':{$lte: new Date()}}).sort({ created: -1 }).limit(1);
+        const d1 = await Sale.find({'store':'AKT Old', 'created':{$lte: new Date(), $gte: new Date( new Date() - 24*60*60*1000)}}).sort({ created: -1 }).limit(1);
+        const d2 = await Sale.find({'store':'AKT New', 'created':{$lte: new Date(), $gte: new Date( new Date() - 24*60*60*1000)}}).sort({ created: -1 }).limit(1);
         console.log(d1);
         let msg ='\n';
         if(d1.length > 0)

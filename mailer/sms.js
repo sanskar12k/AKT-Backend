@@ -58,6 +58,28 @@ module.exports.sms = async() =>{
     }   
 }
 
+module.exports.sendReport = (report) =>{
+    try{
+        let msg ='\n';
+         msg +=    
+             `Report of ${report.store}:
+              Today's Sale: ₹${report.sale}
+              No. of customers: ${report.customer}
+              Paytm: ₹${report.paytm}
+              HDFC: ₹${report.hdfc}`;
+    console.log(msg);
+    for(num of number)
+    {client.messages
+      .create({body: msg, from: process.env.TWILIO_NUM, to: num})
+      .then(message => console.log(message.sid))
+      .catch(err => console.log(err))
+    }
+    }
+    catch (error) {
+        console.log(error)
+    }   
+}
+
 
 module.exports.sendOtp = async(otp, num, reason) => {
     let msg = '\n';

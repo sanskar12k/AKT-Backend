@@ -7,7 +7,7 @@ const { getToken, getRefreshToken, COOKIE_OPTIONS, verifyUser, authenticateToken
 const jwt = require('jsonwebtoken');
 const { userSchema, validateSaleSchema } = require('../schemas/joi');
 const bcrypt = require("bcrypt");
-const { sendOtp } = require('../mailer/sms');
+const { sendOtp, sendReport } = require('../mailer/sms');
 const validateUserSchema = (req, res, next) => {
     const { error } = userSchema.validate(req.body);
     if (error) {
@@ -222,6 +222,7 @@ router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSa
         const report = new Sale({ sale, customer, paytm, hdfc, created, added, store, addedName });
 
         const data = await report.save();
+        sendReport(data)
         res.status(200).json({
             "message": "Report Added Successfully"
         })

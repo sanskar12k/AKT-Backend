@@ -60,9 +60,10 @@ module.exports.sms = async() =>{
 
 module.exports.sendReport = (report) =>{
     try{
+        let created = report.created.toLocaleDateString('en-GB');
         let msg ='\n';
          msg +=    
-             `Report of ${report.store}:
+             `Report of ${report.store} dated on ${created}:
               Today's Sale: ₹${report.sale}
               No. of customers: ${report.customer}
               Paytm: ₹${report.paytm}

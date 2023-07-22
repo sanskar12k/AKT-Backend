@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONGO_D, {
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
-const number = ['+917296806351', '+917852830128']
+const number = ['+917296806351', '+917852830128', '+919415232949']
 module.exports.sms = async() =>{
     try{
         const d1 = await Sale.find({'store':'AKT Old', 'created':{$lte: new Date(), $gte: new Date( new Date() - 24*60*60*1000)}}).sort({ created: -1 }).limit(1);

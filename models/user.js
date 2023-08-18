@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken') 
-const passportLocalMongoose = require('passport-local-mongoose')
+// const passportLocalMongoose = require('passport-local-mongoose')
 const bcrypt = require('bcrypt');
 // const Session = new Schema({
 //     refreshToken: {

@@ -2,7 +2,6 @@ const express = require('express');
 const User = require('../models/user');
 const Sale = require('../models/sale')
 const router = express.Router();
-const passport = require('passport');
 const { getToken, getRefreshToken, COOKIE_OPTIONS, verifyUser, authenticateToken, isAuthorized, isAuthorizedForAddingSale, authenticate } = require('../authentication/authenticate');
 const jwt = require('jsonwebtoken');
 const { userSchema, validateSaleSchema } = require('../schemas/joi');

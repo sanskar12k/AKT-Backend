@@ -1,5 +1,3 @@
-const passport = require("passport")
-const jwt = require("jsonwebtoken")
 const User = require("../models/user")
 const dev = process.env.NODE_ENV !== "production"
 const bcrypt = require('bcrypt');
@@ -26,7 +24,6 @@ exports.getRefreshToken = user => {
   return refreshToken
 }
 
-// exports.verifyUser = passport.authenticate("jwt", { session: false })
 
 exports.verifyUser = async(req,res,next)=>{
   try{

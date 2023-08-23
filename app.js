@@ -22,8 +22,8 @@ const {sms} = require('./mailer/sms');
 const mongoSanitize = require('express-mongo-sanitize');
 const cors = require('cors')
 app.use(cors({
-    origin:'https://akt-frontend.vercel.app',
-    //origin:'http://localhost:3000',
+      origin:'https://akt-frontend.vercel.app',
+    //  origin:'http://localhost:3000',
       credentials: true,
     //  optionSuccessStatus:200,
 }));
@@ -41,20 +41,20 @@ if(process.env.NODE_ENV !== 'production'){
 // });  
 
 
-const sessionConfig = {
-    secret:"thisisasecret",
-    //to remove deprecation warning
-    resave:false,
-    saveUninitialized:true,
-    //for cookie
-    cookie:{
-        expires: Date.now() + 1000*60*60*24*7,
-        maxAge: 1000*60*60*24*7,
-        httpOnly:true
-    }
-}
+// const sessionConfig = {
+//     secret:"thisisasecret",
+//     //to remove deprecation warning
+//     resave:false,
+//     saveUninitialized:true,
+//     //for cookie
+//     cookie:{
+//         expires: Date.now() + 1000*60*60*24*7,
+//         maxAge: 1000*60*60*24*7,
+//         httpOnly:true
+//     }
+// }
 
-app.use(session(sessionConfig))
+// app.use(session(sessionConfig))
 mongoose.connect(process.env.MONGO_D,{
     useNewUrlParser: true,
     useUnifiedTopology: true,

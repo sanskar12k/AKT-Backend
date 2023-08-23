@@ -1,6 +1,7 @@
 const User = require("../models/user")
 const dev = process.env.NODE_ENV !== "production"
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 exports.COOKIE_OPTIONS = {
   httpOnly: true,
   // Since localhost is not having https protocol,

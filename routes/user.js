@@ -198,11 +198,12 @@ router.delete("/:id/delete", authenticateToken, isAuthorized, async (req, res, n
     }
 })
 
-router.get("/sale", authenticateToken, isAuthorized, async (req, res, next) => {
+router.get("/sale/:limit", authenticateToken, isAuthorized, async (req, res, next) => {
     try {
-        const reportOld = await Sale.find({ 'store': 'AKT Old' }).sort({ created: -1 }).limit(30).populate('added');
+        const limit = req.params.limit || 30 ;
+        const reportOld = await Sale.find({ 'store': 'AKT Old' }).sort({ created: -1 }).limit(limit).populate('added');
         // const reportOld = await Sale.find({}).sort({ created: -1 }).limit(30).populate('added');
-        const reportNew = await Sale.find({ 'store': 'AKT New' }).sort({ created: -1 }).limit(30).populate('added');
+        const reportNew = await Sale.find({ 'store': 'AKT New' }).sort({ created: -1 }).limit(limit).populate('added');
         return res.status(200).json({ reportOld, reportNew })
     } catch (error) {
         next(error)

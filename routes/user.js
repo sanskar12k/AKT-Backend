@@ -21,18 +21,19 @@ const validateUserSchema = (req, res, next) => {
 
 router.post('/create', validateUserSchema, async (req, res, next) => {
     const { fname, lname, role, number, username, password, store, dob } = req.body;
-
+    //Checking for all required data
     if (!fname || !role || !password || !username) {
         res.status(422).send({ error: 'Please fill all the columns' });
     }
     try {
         const userExist = await User.findOne({ username: username });
-
+        //Checking if user exist
         if (userExist) {
             res.status(422).json({ error: "User already existed" });
 
         }
         else {
+            //Creating new user
             const user = new User({ fname, username, lname, role, number, store, hash: password, dob });
             //Saves data to db
             await user.save();
@@ -54,18 +55,16 @@ router.post('/login', async (req, res) => {
         }
         //Check for email existence 
         const userEmail = await User.findOne({ username });
-        console.log(userEmail, 'fell')
         if (userEmail) {
-            // console.log('fell')
+            //Verifying password
             const userPassword = await bcrypt.compare(password, userEmail.hash);
             if (userPassword) {
+                //generating auth token
                 const token = await userEmail.genToken();
-                //   res.cookie('jwtoken', token, {
-                //       expires: new Date(Date.now() + 1296000000 ), //1296000000ms = 15days
-                //   })
                 res.status(200).json({ message: "Login Successful", userEmail, token });
             }
             else {
+                // When password doesn't match we return with invalid credential
                 res.status(400).json({ err: "Invalid Credential" });
             }
 
@@ -75,6 +74,7 @@ router.post('/login', async (req, res) => {
     }
     catch (err) {
         console.log(err);
+        res.status(400).json({err:"Something went wrong!"});
     }
 })
 
@@ -90,7 +90,7 @@ router.post('/logout', (req, res) => {
 
 })
 
-
+// /user/userPro - Provides the detail of user logged in
 router.get('/userPro', authenticateToken, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
@@ -103,6 +103,8 @@ router.get('/userPro', authenticateToken, async (req, res) => {
     }
 })
 
+
+// /user/profile/:id - Provides the information about user which we are looking for
 router.get(`/profile/:id`, async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -126,7 +128,7 @@ router.get(`/profile/:id`, async (req, res, next) => {
     }
 })
 
-
+// /user/alluser - Provides detail of all the current employee
 router.get('/alluser', authenticateToken, isAuthorized, async (req, res) => {
     try {
         console.log(req.user.role, 'user role')
@@ -198,13 +200,47 @@ router.delete("/:id/delete", authenticateToken, isAuthorized, async (req, res, n
     }
 })
 
-router.get("/sale/:limit", authenticateToken, isAuthorized, async (req, res, next) => {
+router.get("/sales/:limit", authenticateToken, isAuthorized, async (req, res, next) => {
     try {
         const limit = req.params.limit || 30 ;
-        const reportOld = await Sale.find({ 'store': 'AKT Old' }).sort({ created: -1 }).limit(limit).populate('added');
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth());
+        sixMonthsAgo.setDate(0)
+        // const reportOld = await Sale.find({ 'store': 'AKT Old' }).sort({ created: -1 }).limit(limit).populate('added');
+        const reportOld = await Sale.find({ 'store': 'AKT Old', 'created': { $gte: sixMonthsAgo } }).sort({ created: -1 }).populate('added');
+        const reportNew = await Sale.find({ 'store': 'AKT New', 'created': { $gte: sixMonthsAgo } }).sort({ created: -1 }).populate('added');
         // const reportOld = await Sale.find({}).sort({ created: -1 }).limit(30).populate('added');
-        const reportNew = await Sale.find({ 'store': 'AKT New' }).sort({ created: -1 }).limit(limit).populate('added');
-        return res.status(200).json({ reportOld, reportNew })
+        // const reportNew = await Sale.find({ 'store': 'AKT New' }).sort({ created: -1 }).limit(limit).populate('added');
+        const curDate = new Date();
+        const curMonth = curDate.getUTCMonth();
+        const curYear = curDate.getUTCFullYear();
+        const summary = await Sale.aggregate([
+            {
+                $match:{
+                    $expr:{
+
+                        $and:[
+                            {$lte: [{ $year: '$createdOn'}, curYear]},
+                            {
+                                $gte: [{$month: '$createdOn'}, {$subtract: [curMonth, limit]}]
+                            },
+                            {$lte: [{$month:'$createdOn'}, curMonth]}
+                        ],
+                    },
+                },
+            },
+            {
+                $group:{
+                    _id: '$store',
+                    totalSales:{$sum:"$sale"},
+                    totalCustomers:{$sum:'$customer'},
+                    totalOnlinePayment:{$sum:'$paytm'}, 
+                    count:{$sum:1},
+                }
+            }
+        ]);
+        console.log(summary);
+        return res.status(200).json({ reportOld, reportNew , summary})
     } catch (error) {
         next(error)
     }

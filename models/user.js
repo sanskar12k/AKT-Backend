@@ -56,17 +56,9 @@ const userSchema = new Schema({
     }
 })
 
-// userSchema.set("toJSON", {
-//     transform: function (doc, ret, options) {
-//       delete ret.refreshToken
-//       return ret
-//     },
-// })
-
 userSchema.pre('save' , async function(next) {
   if(this.isModified('hash')){
       this.hash = await bcrypt.hash(this.hash, 12);
-      // this.cpassword = await bcrypt.hash(this.cpassword, 12);
   }
   next();
 });
@@ -74,13 +66,11 @@ userSchema.pre('save' , async function(next) {
  
 userSchema.methods.genToken = async function(){
   try{
-    console.log(this._id, 'dkmk')
-    const tkrn = jwt.sign({_id: this._id, fnme: this.fname, role:this.role, number:this.number}, process.env.SECKEY);
-    return tkrn;
+    const tkn = jwt.sign({_id: this._id, fnme: this.fname, role:this.role, number:this.number}, process.env.SECKEY);
+    return tkn;
   }catch(e){
     console.log(e);
   }
 }
 
-// userSchema.plugin(passportLocalMongoose);
 module.exports = mongoose.model('User', userSchema);

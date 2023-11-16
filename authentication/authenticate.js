@@ -40,19 +40,15 @@ exports.verifyUser = async(req,res,next)=>{
 
 exports.authenticateToken = (req, res, next) =>{
   const authHeader = req.headers['authorization'];
-  console.log(req.headers, authHeader)
   const token = authHeader && authHeader.split('token=')[1];
   if (token == null) return res.sendStatus(401);
   if(!token){
-    console.log('token', token)
     return res.status(403).send({
     })
 };
  console.log(token)
   jwt.verify(token, process.env.SECKEY, (err, user) => {
-    console.log(err)
     if (err) return res.status(403).json({"msg":"Failed authentication"});
-    console.log(user, "user")
     req.user = user
     next()
   })
@@ -150,17 +146,3 @@ module.exports.authentication = async(req, res) => {
        console.log(err);
         }
 } 
-
-
-// exports.authenticate = async(req, res, next)=>{
-//   console.log(req.cookie);
-//   console.log(req.user)
-//   const user = await User.findById(req.body.id);
-//   if(!user){
-//     return res.status(403).json({
-//       message:"Not authorized3"
-//     })
-//   }
-//   req.user = user;
-//   next();
-// }

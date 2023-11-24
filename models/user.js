@@ -20,7 +20,7 @@ const userSchema = new Schema({
     },
     role:{
         type:String,
-        enum: ['Owner', 'Manager', 'CompOper', 'Staff'],
+        enum: ['Owner', 'Manager', 'CompOper', "Staff", "Store Associate", "Billing Associate", "Senior Store Associate", "Store Associate"],
         required: "Please specify correct role."
     },
     number:{

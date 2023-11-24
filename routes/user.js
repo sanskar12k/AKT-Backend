@@ -18,7 +18,7 @@ const validateUserSchema = (req, res, next) => {
     }
 }
 
-
+//Creating new user
 router.post('/create', validateUserSchema, async (req, res, next) => {
     const { fname, lname, role, number, username, password, store, dob } = req.body;
     //Checking for all required data
@@ -46,6 +46,8 @@ router.post('/create', validateUserSchema, async (req, res, next) => {
         console.log(err);
     }
 })
+
+//Logging in user
 router.post('/login', async (req, res) => {
     console.log(req.body)
     try {
@@ -265,6 +267,7 @@ router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSa
         console.log(data)
     }
     catch (e) {
+        console.log(e);
         next(e);
     }
 })

@@ -74,17 +74,13 @@ exports.isAuthorized = async(req, res, next) =>{
  
   exports.isAuthorizedForAddingSale = async(req, res, next) =>{
     try {
-      console.log("ajnd");
       if(!req.user){
-        console.log("dsd");
         throw new Error('Not Authorized')
       }
       const user = await User.findById(req.user._id);
       if(user.role !== 'Owner' && user.role !== 'Manager' && user.role !== 'CompOper' && user.role !== 'Billing Associate'){
-        console.log(user.role);
         throw new Error('Not Authorized')
       }
-      
       next();
     } catch (error) {
       return res.status(403).json({

@@ -41,10 +41,10 @@ router.get("/sales/:store/:limit", authenticateToken, isAuthorized, async (req, 
         const monthsAgo = new Date();
         const curMonth = monthsAgo.getUTCMonth()+1;
         const curYear = monthsAgo.getUTCFullYear();
-        monthsAgo.setMonth(monthsAgo.getMonth() - limit);
-        monthsAgo.setDate(32)
+        monthsAgo.setMonth(monthsAgo.getMonth() - limit+1);
+        monthsAgo.setDate(0)
         console.log(limit, "limit", monthsAgo, "month")
-        const reportOld = await Sale.find({ 'store': store, 'created': { $gt: monthsAgo } }).sort({ created: -1 }).populate('added');
+        const reportOld = await Sale.find({ 'store': store, 'created': { $gte: monthsAgo } }).sort({ created: -1 }).populate('added');
         const summary = await Sale.aggregate([
             {
                 $match:{

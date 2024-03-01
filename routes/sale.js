@@ -6,23 +6,23 @@ const { validateSaleSchema } = require('../schemas/joi');
 const router = express.Router();
 
 
-router.patch('/:id/edit',  async(req, res) => {
+router.patch('/:id/edit', async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const { sale, customer, paytm, hdfc, store } = req.body;
         if (!sale || !customer) {
             return res.status(422).json({
                 "message": "Incomplete Data"
             })
         }
-        const result = await Sale.findOneAndUpdate({_id:id}, {
-            sale:req.body.sale,
-            customer:req.body.customer,
-            paytm:req.body.paytm,
-            hdfc:req.body.hdfc, 
-            store:req.body.store
-         },{
-            runValidators:true
+        const result = await Sale.findOneAndUpdate({ _id: id }, {
+            sale: req.body.sale,
+            customer: req.body.customer,
+            paytm: req.body.paytm,
+            hdfc: req.body.hdfc,
+            store: req.body.store
+        }, {
+            runValidators: true
         })
         // // const data = await report.save();
         console.log(result)
@@ -36,69 +36,65 @@ router.patch('/:id/edit',  async(req, res) => {
 
 router.get("/sales/:store/:limit", authenticateToken, isAuthorized, async (req, res, next) => {
     try {
-        let limit = parseInt(req.params.limit) ;
+        let limit = parseInt(req.params.limit);
         const store = req.params.store;
         const monthsAgo = new Date();
-        const curMonth = monthsAgo.getUTCMonth()+1;
-        const curYear = monthsAgo.getUTCFullYear();
-        monthsAgo.setMonth(monthsAgo.getMonth() - limit+1);
-        monthsAgo.setDate(0)
-        console.log(limit, "limit", monthsAgo, "month")
+        monthsAgo.setMonth(monthsAgo.getMonth() - limit + 1);
+        // monthsAgo.setDate(1)
+        monthsAgo.setUTCHours(0);
+        monthsAgo.setUTCMinutes(0);
+        monthsAgo.setUTCSeconds(0);
+        const prevSummaryDate = new Date();
+        prevSummaryDate.setMonth(prevSummaryDate.getMonth() - 2*limit + 1);
+        console.log(monthsAgo)
+        //Report to be shown in table
         const reportOld = await Sale.find({ 'store': store, 'created': { $gte: monthsAgo } }).sort({ created: -1 }).populate('added');
+        //Summary for current month and previous month
         const summary = await Sale.aggregate([
             {
-                $match:{
-                    $expr:{
-
-                        $and:[
-                            {$lte: [{ $year: '$created'}, curYear]},
-                            {
-                                $gt: [{$month: '$created'}, {$subtract: [curMonth, limit]}]
-                            },
-                            {$eq: ['$store', store]}
+                $match: {
+                    $expr: {
+                        $and: [
+                            { $gte: ['$created', monthsAgo]},
+                            { $eq: ['$store', store] },
                         ],
                     },
                 },
             },
             {
-                $group:{
+                $group: {
                     _id: store,
-                    totalSales:{$sum:"$sale"},
-                    totalCustomers:{$sum:'$customer'},
-                    totalOnlinePayment:{$sum:'$paytm'}, 
-                    count:{$sum:1},
-                }
-            }
+                    totalSales: { $sum: "$sale" },
+                    totalCustomers: { $sum: '$customer' },
+                    totalOnlinePayment: { $sum: '$paytm' },
+                    count: { $sum: 1 },
+                },
+            },
         ]);
+
         const prevSummary = await Sale.aggregate([
             {
-                $match:{
-                    $expr:{
-
-                        $and:[
-                            {$lte: [{ $year: '$created'}, curYear]},
-                            {
-                                $gte: [{$month: '$created'}, {$subtract: [curMonth, 2*limit]}]
-                            },
-                            {
-                                $lt:[{$month: '$created'}, {$subtract: [curMonth, limit-1]}]
-                            },
-                            {$eq: ['$store', store]}
+                $match: {
+                    $expr: {
+                        $and: [
+                            { $gte: ['$created', prevSummaryDate]},
+                            { $lt: ['$created', monthsAgo]},
+                            { $eq: ['$store', store] },
                         ],
                     },
                 },
             },
             {
-                $group:{
+                $group: {
                     _id: store,
-                    totalSales:{$sum:"$sale"},
-                    totalCustomers:{$sum:'$customer'},
-                    totalOnlinePayment:{$sum:'$paytm'}, 
-                    count:{$sum:1},
-                }
-            }
+                    totalSales: { $sum: "$sale" },
+                    totalCustomers: { $sum: '$customer' },
+                    totalOnlinePayment: { $sum: '$paytm' },
+                    count: { $sum: 1 },
+                },
+            },
         ]);
-        return res.status(200).json({ reportOld, summary, prevSummary})
+        return res.status(200).json({ reportOld, summary, prevSummary })
     } catch (error) {
         next(error)
     }

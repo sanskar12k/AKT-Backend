@@ -10,7 +10,7 @@ const saleSchema = new Schema({
     },
     store:{
         type:String,
-        enum:['AKT Old', 'AKT New'],
+        enum:['AKT Old', 'AKT New', 'Bakery'],
         require:true
     },
     customer:{

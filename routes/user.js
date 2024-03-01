@@ -2,11 +2,12 @@ const express = require('express');
 const User = require('../models/user');
 const Sale = require('../models/sale')
 const router = express.Router();
-const { getToken, getRefreshToken, COOKIE_OPTIONS, verifyUser, authenticateToken, isAuthorized, isAuthorizedForAddingSale, authenticate } = require('../authentication/authenticate');
+const { authenticateToken, isAuthorized, isAuthorizedForAddingSale, authenticate } = require('../authentication/authenticate');
 const jwt = require('jsonwebtoken');
 const { userSchema, validateSaleSchema } = require('../schemas/joi');
 const bcrypt = require("bcrypt");
 const { sendOtp, sendReport } = require('../mailer/sms');
+
 const validateUserSchema = (req, res, next) => {
     const { error } = userSchema.validate(req.body);
     if (error) {
@@ -29,7 +30,7 @@ router.post('/create', validateUserSchema, async (req, res, next) => {
         const userExist = await User.findOne({ username: username });
         //Checking if user exist
         if (userExist) {
-            res.status(422).json({ error: "User already existed" });
+            res.status(422).json({ error: "User already exists" });
 
         }
         else {
@@ -76,7 +77,7 @@ router.post('/login', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(400).json({err:"Something went wrong!"});
+        res.status(400).json({ err: "Something went wrong!" });
     }
 })
 
@@ -204,7 +205,7 @@ router.delete("/:id/delete", authenticateToken, isAuthorized, async (req, res, n
 
 router.get("/sales/:limit", authenticateToken, isAuthorized, async (req, res, next) => {
     try {
-        const limit = req.params.limit || 30 ;
+        const limit = req.params.limit || 30;
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth());
         sixMonthsAgo.setDate(0)
@@ -218,31 +219,31 @@ router.get("/sales/:limit", authenticateToken, isAuthorized, async (req, res, ne
         const curYear = curDate.getUTCFullYear();
         const summary = await Sale.aggregate([
             {
-                $match:{
-                    $expr:{
+                $match: {
+                    $expr: {
 
-                        $and:[
-                            {$lte: [{ $year: '$createdOn'}, curYear]},
+                        $and: [
+                            { $lte: [{ $year: '$createdOn' }, curYear] },
                             {
-                                $gte: [{$month: '$createdOn'}, {$subtract: [curMonth, limit]}]
+                                $gte: [{ $month: '$createdOn' }, { $subtract: [curMonth, limit] }]
                             },
-                            {$lte: [{$month:'$createdOn'}, curMonth]}
+                            { $lte: [{ $month: '$createdOn' }, curMonth] }
                         ],
                     },
                 },
             },
             {
-                $group:{
+                $group: {
                     _id: '$store',
-                    totalSales:{$sum:"$sale"},
-                    totalCustomers:{$sum:'$customer'},
-                    totalOnlinePayment:{$sum:'$paytm'}, 
-                    count:{$sum:1},
+                    totalSales: { $sum: "$sale" },
+                    totalCustomers: { $sum: '$customer' },
+                    totalOnlinePayment: { $sum: '$paytm' },
+                    count: { $sum: 1 },
                 }
             }
         ]);
         console.log(summary);
-        return res.status(200).json({ reportOld, reportNew , summary})
+        return res.status(200).json({ reportOld, reportNew, summary })
     } catch (error) {
         next(error)
     }
@@ -260,7 +261,8 @@ router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSa
         const report = new Sale({ sale, customer, paytm, hdfc, created, added, store, addedName });
 
         const data = await report.save();
-        sendReport(data)
+        
+
         res.status(200).json({
             "message": "Report Added Successfully"
         })
@@ -276,7 +278,7 @@ router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSa
 
 router.get('/sendOtp', authenticateToken, async (req, res) => {
     try {
-        const num = '+91' +  req.user.number;
+        const num = '+91' + req.user.number;
 
         // const num = +91782830128;
         var otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
@@ -329,7 +331,7 @@ router.patch('/verifyPhone', authenticateToken, async (req, res) => {
             user.phoneVerify = 1;
             await user.save();
             res.status(200).json({
-                "message":"Your contact number has been verified."
+                "message": "Your contact number has been verified."
             })
         }
         else {
@@ -346,7 +348,7 @@ router.patch('/verifyPhone', authenticateToken, async (req, res) => {
 
 router.get('/sendOtpForNumVerify', authenticateToken, async (req, res) => {
     try {
-        const num = '+91' +  req.user.number;
+        const num = '+91' + req.user.number;
         //const num = +91782830128;
         var otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
         console.log(otp);

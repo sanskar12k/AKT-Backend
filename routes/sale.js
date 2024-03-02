@@ -34,28 +34,36 @@ router.patch('/:id/edit', async (req, res) => {
     }
 })
 
-router.get("/sales/:store/:limit", authenticateToken, isAuthorized, async (req, res, next) => {
+router.get("/sales/:store/:limit/:strt/:end", authenticateToken, isAuthorized, async (req, res, next) => {
     try {
+        const from = new Date(Date.parse(req.params.strt));
+        const to = new Date(new Date(Date.parse(req.params.end)).getTime() + 86400000);
+        const dateDiff = to.getTime() - from.getTime(); // Difference in milliseconds
+        // Calculate two additional dates with the same difference
+        const dateBeforeFrom = new Date(from.getTime() - dateDiff);
+        const dateBeforeTo = new Date(to.getTime() - dateDiff);
+        console.log(dateBeforeFrom, "from", dateBeforeTo, "to");
         let limit = parseInt(req.params.limit);
         const store = req.params.store;
         const monthsAgo = new Date();
         monthsAgo.setMonth(monthsAgo.getMonth() - limit + 1);
-        // monthsAgo.setDate(1)
+        monthsAgo.setDate(1)
         monthsAgo.setUTCHours(0);
         monthsAgo.setUTCMinutes(0);
         monthsAgo.setUTCSeconds(0);
         const prevSummaryDate = new Date();
-        prevSummaryDate.setMonth(prevSummaryDate.getMonth() - 2*limit + 1);
-        console.log(monthsAgo)
+        prevSummaryDate.setMonth(prevSummaryDate.getMonth() - 2 * limit + 1);
         //Report to be shown in table
-        const reportOld = await Sale.find({ 'store': store, 'created': { $gte: monthsAgo } }).sort({ created: -1 }).populate('added');
+        const reportOld = await Sale.find({ 'store': store, 'created': { $lte: to + 1, $gte: from } }).sort({ created: -1 }).populate('added');
         //Summary for current month and previous month
         const summary = await Sale.aggregate([
             {
                 $match: {
                     $expr: {
                         $and: [
-                            { $gte: ['$created', monthsAgo]},
+                            // { $gte: ['$created', monthsAgo]},
+                            { $gte: ['$created', from] },
+                            { $lt: ['$created', to] },
                             { $eq: ['$store', store] },
                         ],
                     },
@@ -77,8 +85,8 @@ router.get("/sales/:store/:limit", authenticateToken, isAuthorized, async (req, 
                 $match: {
                     $expr: {
                         $and: [
-                            { $gte: ['$created', prevSummaryDate]},
-                            { $lt: ['$created', monthsAgo]},
+                            { $gte: ['$created', dateBeforeFrom ]},
+                            { $lt: ['$created',  dateBeforeTo] },
                             { $eq: ['$store', store] },
                         ],
                     },
@@ -94,6 +102,8 @@ router.get("/sales/:store/:limit", authenticateToken, isAuthorized, async (req, 
                 },
             },
         ]);
+        console.log("summary", summary);
+        console.log("prev summary", prevSummary);
         return res.status(200).json({ reportOld, summary, prevSummary })
     } catch (error) {
         next(error)

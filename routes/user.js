@@ -209,11 +209,8 @@ router.get("/sales/:limit", authenticateToken, isAuthorized, async (req, res, ne
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth());
         sixMonthsAgo.setDate(0)
-        // const reportOld = await Sale.find({ 'store': 'AKT Old' }).sort({ created: -1 }).limit(limit).populate('added');
         const reportOld = await Sale.find({ 'store': 'AKT Old', 'created': { $gte: sixMonthsAgo } }).sort({ created: -1 }).populate('added');
         const reportNew = await Sale.find({ 'store': 'AKT New', 'created': { $gte: sixMonthsAgo } }).sort({ created: -1 }).populate('added');
-        // const reportOld = await Sale.find({}).sort({ created: -1 }).limit(30).populate('added');
-        // const reportNew = await Sale.find({ 'store': 'AKT New' }).sort({ created: -1 }).limit(limit).populate('added');
         const curDate = new Date();
         const curMonth = curDate.getUTCMonth();
         const curYear = curDate.getUTCFullYear();

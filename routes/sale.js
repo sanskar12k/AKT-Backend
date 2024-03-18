@@ -36,8 +36,8 @@ router.patch('/:id/edit', async (req, res) => {
 
 router.get("/sales/:store/:limit/:strt/:end", authenticateToken, isAuthorized, async (req, res, next) => {
     try {
-        const from = new Date(Date.parse(req.params.strt));
-        const to = new Date(new Date(Date.parse(req.params.end)).getTime() + 86400000);
+        const from = new Date(new Date(Date.parse(req.params.strt)).getTime() - 86400000);
+        const to = new Date(new Date(Date.parse(req.params.end)).getTime());
         const dateDiff = to.getTime() - from.getTime(); // Difference in milliseconds
         // Calculate two additional dates with the same difference
         const dateBeforeFrom = new Date(from.getTime() - dateDiff);

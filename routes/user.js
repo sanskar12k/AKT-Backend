@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const { userSchema, validateSaleSchema } = require('../schemas/joi');
 const bcrypt = require("bcrypt");
 const { sendOtp, sendReport } = require('../mailer/sms');
-
+const { mail } = require('../mailer/mail');
 const validateUserSchema = (req, res, next) => {
     const { error } = userSchema.validate(req.body);
     if (error) {
@@ -258,12 +258,32 @@ router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSa
         const report = new Sale({ sale, customer, paytm, hdfc, created, added, store, addedName });
 
         const data = await report.save();
-        
-
+        const averageBillingAmount = (data.sale / data.customer).toFixed(2);
+        const dateObject = new Date(created);
+        const dateOnlyString = dateObject.toISOString().split('T')[0];
+        const admin = await User.find({ role: 'Owner' }).select('username');
+        const emailsArray = admin.map(owner => owner.username);
+        const subject = `Sales report of  ${data.store} on ${dateOnlyString}`;
+        const html = `<h1>  ${data.store}  </h1>
+                    <div class="details">
+                    <p><strong>Date:</strong> ${dateOnlyString}</p>
+                    <p><strong>Sales:</strong> ${data.sale}</p>
+                    <p><strong>Customers:</strong> ${data.customer} </p>
+                    <p><strong>Paytm:</strong> ${data.paytm} </p>
+                    <p><strong>Average Billing Amount:</strong> ${averageBillingAmount} </p>
+                    <p><strong>Added By:</strong> ${data.addedName} </p>
+                    <a href='https://akt-frontend.vercel.app'> Visit Website </a>
+                    </div>`
+        mail(emailsArray, subject, html)
+            .then(() => {
+                console.log('Email sent successfully');
+            })
+            .catch(err => {
+                console.error('Email sending error:', err);
+            });
         res.status(200).json({
             "message": "Report Added Successfully"
         })
-        console.log(data)
     }
     catch (e) {
         console.log(e);

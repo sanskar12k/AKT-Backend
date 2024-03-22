@@ -24,7 +24,6 @@ router.patch('/:id/edit', async (req, res) => {
         }, {
             runValidators: true
         })
-        // // const data = await report.save();
         console.log(result)
         res.status(200).json({
             "message": "Report Updated",

@@ -6,7 +6,8 @@ const session  = require('express-session');
 const User = require('./models/user');
 const Sale = require('./models/sale')
 const user = require('./routes/user');
-const sale = require('./routes/sale')
+const sale = require('./routes/sale');
+const store = require('./routes/store');
 const {sms} = require('./mailer/sms');
   app.use(function(req, res, next) {
    res.header('Access-Control-Allow-Origin', 'https://akt-frontend.vercel.app');
@@ -60,7 +61,8 @@ app.get('/', (req, res)=>{
 })
 
 app.use('/user', user);
-app.use('/sale', sale)
+app.use('/sale', sale);
+app.use('/store', store);
 
 app.listen(8000, ()=>{
     console.log("Connected")

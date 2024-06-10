@@ -78,7 +78,7 @@ exports.isAuthorized = async(req, res, next) =>{
         throw new Error('Not Authorized')
       }
       const user = await User.findById(req.user._id);
-      if(user.role !== 'Owner' && user.role !== 'Manager' && user.role !== 'CompOper' && user.role !== 'Billing Associate'){
+      if(user.role !== 'Owner' && user.role !== 'Manager' && user.role !== 'BillingAssociate' && user.role !== 'Billing Associate'){
         throw new Error('Not Authorized')
       }
       next();

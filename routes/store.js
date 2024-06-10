@@ -7,7 +7,7 @@ const { validateSaleSchema } = require('../schemas/joi');
 const router = express.Router();
 
 
-router.get("/allStores",authenticateToken, isAuthorized, async(req, res)=>{
+router.get("/allStores",authenticateToken, async(req, res)=>{
     try{
         const data = await Store.find();
         res.status(200).json({

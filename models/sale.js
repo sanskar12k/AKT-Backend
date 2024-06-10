@@ -10,7 +10,7 @@ const saleSchema = new Schema({
     },
     store:{
         type:String,
-        enum:['AKT Old', 'AKT New', 'Bakery'],
+        enum:['AKT Old', 'AKT Cosmetics', 'Bakery', 'Maa Mansha Cold Drink'],
         require:true
     },
     customer:{

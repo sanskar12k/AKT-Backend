@@ -12,7 +12,10 @@ const validateUserSchema = (req, res, next) => {
     const { error } = userSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
-        next(msg)
+        console.log(msg, "msg");
+        res.status(500).json({
+            "error":error
+        })
     }
     else {
         next();
@@ -23,6 +26,7 @@ const validateUserSchema = (req, res, next) => {
 router.post('/create', validateUserSchema, async (req, res, next) => {
     const { fname, lname, role, number, username, password, store, dob } = req.body;
     //Checking for all required data
+    console.log(role);
     if (!fname || !role || !password || !username) {
         res.status(422).send({ error: 'Please fill all the columns' });
     }
@@ -44,7 +48,11 @@ router.post('/create', validateUserSchema, async (req, res, next) => {
     }
 
     catch (err) {
-        console.log(err);
+        console.log("error");
+        console.log(err, "error");
+        res.status(400).json({
+            "error":err
+        })
     }
 })
 
@@ -134,7 +142,6 @@ router.get(`/profile/:id`, async (req, res, next) => {
 // /user/alluser - Provides detail of all the current employee
 router.get('/alluser', authenticateToken, isAuthorized, async (req, res) => {
     try {
-        console.log(req.user.role, 'user role')
         if (req.user.role === 'Owner') {
             const data = await User.find({ role: { $nin: ['Owner'] } });
             // console.log(data)
@@ -210,7 +217,7 @@ router.get("/sales/:limit", authenticateToken, isAuthorized, async (req, res, ne
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth());
         sixMonthsAgo.setDate(0)
         const reportOld = await Sale.find({ 'store': 'AKT Old', 'created': { $gte: sixMonthsAgo } }).sort({ created: -1 }).populate('added');
-        const reportNew = await Sale.find({ 'store': 'AKT New', 'created': { $gte: sixMonthsAgo } }).sort({ created: -1 }).populate('added');
+        const reportNew = await Sale.find({ 'store': 'AKT Cosmetics', 'created': { $gte: sixMonthsAgo } }).sort({ created: -1 }).populate('added');
         const curDate = new Date();
         const curMonth = curDate.getUTCMonth();
         const curYear = curDate.getUTCFullYear();

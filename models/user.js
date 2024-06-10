@@ -1,14 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken') 
-// const passportLocalMongoose = require('passport-local-mongoose')
 const bcrypt = require('bcrypt');
-// const Session = new Schema({
-//     refreshToken: {
-//       type: String,
-//       default: "",
-//     },
-//   })
 
 const userSchema = new Schema({
     fname:{
@@ -20,7 +13,7 @@ const userSchema = new Schema({
     },
     role:{
         type:String,
-        enum: ['Owner', 'Manager', 'CompOper', "Staff", "Store Associate", "Billing Associate", "Senior Store Associate", "Store Associate"],
+        enum: ['Owner', 'Manager', "BillingAssociate", "SeniorStoreAssociate", "StoreAssociate"],
         required: "Please specify correct role."
     },
     number:{
@@ -36,7 +29,7 @@ const userSchema = new Schema({
     },
     store:{
       type: String,
-      enum:['AKT Old', 'AKT New']
+      enum:['AKT Old', 'AKT Cosmetics', 'Bakery', 'Maa Mansha Cold Drinks']
     },
     
     username:{

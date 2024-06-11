@@ -283,7 +283,7 @@ router.post('/addSale', authenticateToken, isAuthorizedForAddingSale, validateSa
                     </div>`
         mail(emailsArray, subject, html)
             .then(() => {
-                console.log('Email sent successfully');
+                // console.log('Email sent successfully');
             })
             .catch(err => {
                 console.error('Email sending error:', err);

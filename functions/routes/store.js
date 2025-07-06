@@ -3,7 +3,6 @@ const User = require('../models/user');
 const Sale = require('../models/sale');
 const Store = require('../models/store');
 const { isAuthorized, authenticateToken } = require('../authentication/authenticate');
-const { validateSaleSchema } = require('../schemas/joi');
 const router = express.Router();
 
 

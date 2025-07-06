@@ -6,7 +6,7 @@ const { authenticateToken, isAuthorized, isAuthorizedForAddingSale, authenticate
 const jwt = require('jsonwebtoken');
 const { userSchema, validateSaleSchema } = require('../schemas/joi');
 const bcrypt = require("bcrypt");
-const { sendOtp, sendReport } = require('../mailer/sms');
+const { sendOtp } = require('../mailer/sms');
 const { mail } = require('../mailer/mail');
 const validateUserSchema = (req, res, next) => {
     const { error } = userSchema.validate(req.body);

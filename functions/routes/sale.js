@@ -2,7 +2,6 @@ const express = require('express');
 const User = require('../models/user');
 const Sale = require('../models/sale');
 const { isAuthorized, authenticateToken } = require('../authentication/authenticate');
-const { validateSaleSchema } = require('../schemas/joi');
 const router = express.Router();
 
 
